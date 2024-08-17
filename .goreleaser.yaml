@@ -5,6 +5,9 @@ before:
     - go mod tidy
     - go generate ./...
 
+env:
+  - PACKAGE_PATH=github.com/jack-kitto/secretly-web/cmd
+
 builds:
 - binary: "{{ .ProjectName }}"
   main: ./cmd/api
