@@ -51,7 +51,3 @@ release:
     Those were the changes on {{ .Tag }}!
 
   include_meta: true
-
-universal_binaries:
-    replace: true
-    mod_timestamp: "{{ .CommitTimestamp }}"
