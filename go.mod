@@ -4,12 +4,12 @@ go 1.23.0
 
 require (
 	github.com/a-h/templ v0.2.747
+	github.com/coder/websocket v1.8.12
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/testcontainers/testcontainers-go v0.32.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.32.0
-	nhooyr.io/websocket v1.8.17
 )
 
 require (

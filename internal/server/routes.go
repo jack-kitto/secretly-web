@@ -2,17 +2,16 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-
-	"fmt"
+	"secretly-web/cmd/web"
 	"time"
 
 	"github.com/a-h/templ"
+	"github.com/coder/websocket"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"nhooyr.io/websocket"
-	"secretly-web/cmd/web"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -52,7 +51,6 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	socket, err := websocket.Accept(w, r, nil)
-
 	if err != nil {
 		log.Printf("could not open websocket: %v", err)
 		_, _ = w.Write([]byte("could not open websocket"))
