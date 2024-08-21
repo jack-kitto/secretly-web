@@ -1,0 +1,19 @@
+package web
+
+templ SigninForm() {
+	@Base() {
+		<div class="w-screen h-screen flex flex-col items-center justify-start bg-background">
+			<div class="text-[64px] font-extrabold text-white pt-40 pb-24">lets get started.</div>
+			<form class="bg-white gap-4 p-6 rounded-md shadow-glow w-100 flex flex-col h-[300px]" hx-post="/sign-in" method="POST" hx-target="#hello-container" hx-trigger="submit">
+				<div class="flex flex-col">
+					<p>Enter your name and email.</p>
+					<p>We'll send you a temporary sign-in link to begin.</p>
+				</div>
+				<input autocomplete="off" data-1p-ignore data-lpignore="true" placeholder="John Wick" class="border border-textInput p-3 rounded-lg" id="name" name="name" type="text"/>
+				<input placeholder="john.wick@gmail.com" class="border p-3 border-textInput rounded-lg" id="email" for="email" name="email" type="email"/>
+				<button class="bg-dark w-fit py-[14px] px-4 text-white rounded-md" type="submit">Send</button>
+			</form>
+			<div id="hello-container"></div>
+		</div>
+	}
+}
