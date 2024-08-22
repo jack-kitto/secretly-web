@@ -1,19 +1,103 @@
 package web
 
-templ SigninForm() {
+import "fmt"
+
+templ Onboarding(title string) {
 	@Base() {
 		<div class="w-screen h-screen flex flex-col items-center justify-start bg-background">
-			<div class="text-[64px] font-extrabold text-white pt-40 pb-24">lets get started.</div>
-			<form class="bg-white gap-4 p-6 rounded-md shadow-glow w-100 flex flex-col h-[300px]" hx-post="/sign-in" method="POST" hx-target="#hello-container" hx-trigger="submit">
-				<div class="flex flex-col">
-					<p>Enter your name and email.</p>
-					<p>We'll send you a temporary sign-in link to begin.</p>
-				</div>
-				<input autocomplete="off" data-1p-ignore data-lpignore="true" placeholder="John Wick" class="border border-textInput p-3 rounded-lg" id="name" name="name" type="text"/>
-				<input placeholder="john.wick@gmail.com" class="border p-3 border-textInput rounded-lg" id="email" for="email" name="email" type="email"/>
-				<button class="bg-dark w-fit py-[14px] px-4 text-white rounded-md" type="submit">Send</button>
-			</form>
+			<div class="text-[64px] font-extrabold text-white pt-40 pb-24">{ title }</div>
+			<div class="w-[500px]">
+				{ children... }
+			</div>
 			<div id="hello-container"></div>
+		</div>
+	}
+}
+
+templ SigninForm() {
+	@Onboarding("lets get started.") {
+		<form class="bg-white gap-4 p-6 rounded-md shadow-glow w-full flex flex-col" hx-post="/sign-in" method="POST" hx-target="#hello-container" hx-trigger="submit">
+			<div class="flex flex-col">
+				<p>Enter your name and email.</p>
+				<p>We'll send you a temporary sign-in link to begin.</p>
+			</div>
+			<input autocomplete="off" data-1p-ignore data-lpignore="true" placeholder="John Wick" class="border border-textInput p-3 rounded-lg" id="name" name="name" type="text"/>
+			<input placeholder="john.wick@gmail.com" class="border p-3 border-textInput rounded-lg" id="email" for="email" name="email" type="email"/>
+			<button class="bg-dark w-fit py-[14px] px-4 text-white rounded-md" type="submit">Send</button>
+		</form>
+	}
+}
+
+templ Hi() {
+	<div>
+		Hello there
+	</div>
+}
+
+func getAccordionOpenStyles(isOpen bool) string {
+	if isOpen {
+		return "max-h-60 scale-105 "
+	}
+	return "max-h-0 hidden"
+}
+
+func getAccordionIconOpenStyles(isOpen bool) string {
+	if isOpen {
+		return "-rotate-90"
+	}
+	return ""
+}
+
+func getIsOpen(isOpen bool) string {
+	if isOpen {
+		return "true"
+	}
+	return "false"
+}
+
+templ AccordionItem(title string, description string, command string, isOpen bool) {
+	<button
+		class="flex cursor-pointer transition flex-col items-center justify-between w-full p-4"
+		hx-get={ fmt.Sprintf("/toggle-accordion?title=%s&description=%s&isOpen=%s&command=%s", title, description, getIsOpen(!isOpen), command) }
+		hx-trigger="click"
+		hx-target="this"
+		hx-swap="outerHTML"
+		data-title="{ title }"
+		data-description="{ description }"
+		data-open="{ isOpen }"
+	>
+		<div class="flex w-full justify-between">
+			<div class="flex flex-col items-start justify-start text-left">
+				<h1 class="text-wrap text-[28px] font-extrabold max-w-100">{ title }</h1>
+			</div>
+			<div class={ fmt.Sprintf("h-full flex items-center justify-center transition-transform duration-1000 %s", getAccordionIconOpenStyles(isOpen)) }>
+				<div>
+					@ChevronLeft()
+				</div>
+			</div>
+		</div>
+		<div class={ fmt.Sprintf("text-wrap text-left w-full text-[#71717A] text-[14px] transition-all duration-500 ease-out overflow-hidden %s", getAccordionOpenStyles(isOpen)) }>
+			<div>
+				{ description }
+			</div>
+		</div>
+		<div class={ fmt.Sprintf("border border-slate-300 mt-4 rounded-lg flex items-start px-4 w-full py-2 transition-all duration-500 ease-out overflow-hidden %s", getAccordionOpenStyles(isOpen)) }>
+			{ command }
+		</div>
+	</button>
+}
+
+templ Walkthrough() {
+	@Onboarding("start by adding your first project.") {
+		<div class="bg-white gap-4 p-6 rounded-md shadow-glow w-full flex flex-col">
+			<div class="w-full">
+				@AccordionItem("Install the CLI", "Power up your terminal! ⚡️ Get our CLI for lightning-fast secret management. One command away from secure coding bliss.", "go install github.com/jack-kitto/secretly-cli/v1.0.0", false)
+				@AccordionItem("Create a project", "Your secrets need a home 🏠 Set up a cozy project space. Name it, tag it, make it yours. Organisation made simple. Run this command from one of your projects", "secretly --token XXXX-YYYY --init", false)
+				@AccordionItem("Add your envs", "Shhh... your secrets are safe here 🤫 In Secretly, you can drag, drop, or paste your .env files anywhere on any page. We'll tuck them away securely in seconds, give it a shot!", "hello", false)
+			</div>
+			<div class="w-full flex items-center justify-center">
+				<button class="bg-dark w-fit py-[14px] px-[78px] text-white rounded-md" type="submit">Skip</button>
+			</div>
 		</div>
 	}
 }
