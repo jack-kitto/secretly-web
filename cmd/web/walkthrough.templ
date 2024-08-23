@@ -34,15 +34,18 @@ templ AccordionItem(item WalkthroughItemData) {
 			<div class={ "text-wrap text-left w-full text-[#71717A] text-[14px] overflow-hidden" }>
 				{ item.description }
 			</div>
+			if item.hideCommand == false {
+				<div class={ "group text-[#CFD2D1] space-x-4  bg-gray-800 flex justify-between mt-4 rounded-lg flex items-start px-4 relative w-full py-2 overflow-hidden" }>
+					<div class="flex gap-2 justify-center items-center">
+						<p class="text-yellow-500 select-none">$</p>
+						<p class="select-all">{ item.command }</p>
+					</div>
+					<button onmouseup={ Toast("Successfully copied command 🚀") } onmousedown={ CopyMe(item.command) } class="hidden absolute right-2 group-hover:flex">
+						@IconCopy()
+					</button>
+				</div>
+			}
 		</div>
-		if item.hideCommand == false {
-			<div class={ "border group flex justify-between border-slate-300 mt-4 rounded-lg flex items-start px-4 w-full py-2 overflow-hidden" }>
-				{ item.command }
-				<button onclick={ Toast("Successfully copied command 🚀") } onclick={ CopyMe(item.command) } class="hidden group-hover:flex">
-					@IconCopy()
-				</button>
-			</div>
-		}
 	</div>
 }
 
