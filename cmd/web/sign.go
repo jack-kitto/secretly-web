@@ -12,9 +12,6 @@ func SigninWebHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// name := r.FormValue("name")
-	// email := r.FormValue("email")
-
 	// Check if the request is an HTMX request
 	if r.Header.Get("HX-Request") == "true" {
 		// Render the video background template
