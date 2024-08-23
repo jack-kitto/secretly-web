@@ -88,7 +88,7 @@ func installCLIItem() WalkthroughItemData {
 func createProjectItem() WalkthroughItemData {
 	return WalkthroughItemData{
 		title:       "Create a project",
-		description: "Your secrets need a home 🏠 Set up a cozy project space. Name it, tag it, make it yours. Organisation made simple. Run this command from one of your projects",
+		description: "Your secrets need a home 🏠 Set up a cozy project space. Name it, tag it, make it yours. Organisation made simple. Run this command from within one of your projects",
 		command:     "secretly --token XXXX-YYYY --init",
 		isOpen:      false,
 		hideCommand: false,
