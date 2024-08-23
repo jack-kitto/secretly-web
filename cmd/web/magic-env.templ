@@ -1,0 +1,168 @@
+package web
+
+templ MagicEnv() {
+	<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+    }
+
+    #dropZone {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    #dropZoneText {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      font-size: 24px;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      max-width: 80%;
+      max-height: 80%;
+      overflow: auto;
+      z-index: 200;
+    }
+
+    #closePopup {
+      float: right;
+      cursor: pointer;
+    }
+
+    #feedback {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+	<div id="dropZone">
+		<div id="dropZoneText">Drop file here</div>
+	</div>
+	<div id="popup">
+		<span id="closePopup">&times;</span>
+		<h2>Parsed Secrets</h2>
+		<pre id="secretsContent"></pre>
+	</div>
+	<div id="feedback"></div>
+	<script>
+    const dropZone = document.getElementById('dropZone');
+    const popup = document.getElementById('popup');
+    const secretsContent = document.getElementById('secretsContent');
+    const closePopup = document.getElementById('closePopup');
+    const feedback = document.getElementById('feedback');
+
+    function handleFileContent(content) {
+      const secrets = parseEnvFile(content);
+      const obfuscatedSecrets = obfuscateSecrets(secrets);
+      displaySecrets(obfuscatedSecrets);
+      showFeedback('File processed successfully', 'success');
+    }
+
+    function parseEnvFile(content) {
+      const lines = content.split('\n');
+      const secrets = {};
+      for (const line of lines) {
+        const [key, value] = line.split('=');
+        if (key && value) {
+          secrets[key.trim()] = value.trim();
+        }
+      }
+      return secrets;
+    }
+
+    function obfuscateSecrets(secrets) {
+      const obfuscated = {};
+      for (const [key, value] of Object.entries(secrets)) {
+        obfuscated[key] = '*'.repeat(value.length);
+      }
+      return obfuscated;
+    }
+
+    function displaySecrets(secrets) {
+      secretsContent.textContent = JSON.stringify(secrets, null, 2);
+      popup.style.display = 'block';
+    }
+
+    function showFeedback(message, type) {
+      feedback.textContent = message;
+      feedback.className = type;
+      feedback.style.display = 'block';
+      setTimeout(() => {
+        feedback.style.display = 'none';
+      }, 3000);
+    }
+
+    // Drag and drop functionality
+    document.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dropZone.style.display = 'flex';
+    });
+
+    document.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      if (e.relatedTarget === null) {
+        dropZone.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    document.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.display = 'none';
+      const file = e.dataTransfer.files[0];
+      if (file && file.name.startsWith('.env')) {
+        const reader = new FileReader();
+        reader.onload = (event) => handleFileContent(event.target.result);
+        reader.readAsText(file);
+      } else {
+        showFeedback('Please drop a .env file', 'error');
+      }
+    });
+
+    // Paste functionality
+    document.addEventListener('paste', (e) => {
+      const pastedText = e.clipboardData.getData('text');
+      handleFileContent(pastedText);
+    });
+
+    // Close popup
+    closePopup.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+  </script>
+}
