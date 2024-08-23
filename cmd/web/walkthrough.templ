@@ -1,7 +1,5 @@
 package web
 
-import "fmt"
-
 script CopyMe(s string) {
   var TempText = document.createElement("input");
   TempText.value = s;
@@ -12,13 +10,13 @@ script CopyMe(s string) {
   document.body.removeChild(TempText);
 }
 
-templ AccordionItem(item AccordionItemData) {
+templ AccordionItem(item WalkthroughItemData) {
 	<div
 		class="flex flex-col items-center justify-between w-full p-4"
 	>
 		<button
 			class="flex w-full justify-between"
-			hx-get={ fmt.Sprintf("/toggle-accordion?title=%s&description=%s&isOpen=%s&command=%s", item.title, item.description, item.getIsOpen(), item.command) }
+			hx-get={ item.encodeParams() }
 			hx-trigger="click"
 			hx-target="closest div"
 			hx-swap="outerHTML"
@@ -36,13 +34,15 @@ templ AccordionItem(item AccordionItemData) {
 			<div class={ "text-wrap text-left w-full text-[#71717A] text-[14px] overflow-hidden" }>
 				{ item.description }
 			</div>
+		</div>
+		if item.hideCommand == false {
 			<div class={ "border group flex justify-between border-slate-300 mt-4 rounded-lg flex items-start px-4 w-full py-2 overflow-hidden" }>
 				{ item.command }
 				<button onclick={ Toast("Successfully copied command 🚀") } onclick={ CopyMe(item.command) } class="hidden group-hover:flex">
 					@IconCopy()
 				</button>
 			</div>
-		</div>
+		}
 	</div>
 }
 
