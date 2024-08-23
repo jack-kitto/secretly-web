@@ -36,19 +36,3 @@ func SigninWebHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
-func ToggleAccordion(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Query().Get("title")
-	description := r.URL.Query().Get("description")
-	command := r.URL.Query().Get("command")
-	isOpen := r.URL.Query().Get("isOpen")
-
-	component := AccordionItem(title, description, command, isOpen == "true")
-	err := component.Render(r.Context(), w)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("Error toggling the accordion item: %v", err)
-		return
-	}
-	return
-}

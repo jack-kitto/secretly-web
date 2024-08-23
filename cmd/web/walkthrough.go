@@ -1,22 +1,24 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
 func (item AccordionItemData) descriptionStyles() string {
-	if item.isOpen {
-		return "max-h-60  "
-	}
-	return "max-h-0"
+	// if item.isOpen {
+	// 	return " max-h-60  "
+	// }
+	return " max-h-0"
 }
 
 func (item AccordionItemData) getIsOpen() string {
 	if item.isOpen {
-		return "true"
+		return "false"
 	}
-	return "false"
+	return "true"
 }
 
 func (item AccordionItemData) chevronStyles() string {
@@ -31,6 +33,17 @@ type AccordionItemData struct {
 	description string
 	command     string
 	isOpen      bool
+}
+
+func (i *AccordionItemData) Print() {
+	if i == nil {
+		panic("Missing param i AccordionItemData")
+	}
+	res, err := json.Marshal(i)
+	if err != nil {
+		panic(err)
+	}
+	log.Print(string(res))
 }
 
 func (item *AccordionItemData) decodeParams(r *http.Request) {
@@ -64,7 +77,7 @@ func installCLIItem() AccordionItemData {
 func createProjectItem() AccordionItemData {
 	return AccordionItemData{
 		title:       "Create a project",
-		description: "Your secrets need a home 🏠 Set up a cozy project space. Name it, tag it, make it yours. Organisation made simple. <br /> Run this command from one of your projects",
+		description: "Your secrets need a home 🏠 Set up a cozy project space. Name it, tag it, make it yours. Organisation made simple. Run this command from one of your projects",
 		command:     "secretly --token XXXX-YYYY --init",
 		isOpen:      false,
 	}
@@ -77,4 +90,19 @@ func addEnvItem() AccordionItemData {
 		command:     "secretly --token XXXX-YYYY --init",
 		isOpen:      false,
 	}
+}
+
+func ToggleAccordion(w http.ResponseWriter, r *http.Request) {
+	item := AccordionItemData{}
+	item.decodeParams(r)
+
+	component := AccordionItem(item)
+
+	err := component.Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Printf("Error toggling the accordion item: %v", err)
+		return
+	}
+	return
 }

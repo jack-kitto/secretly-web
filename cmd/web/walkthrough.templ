@@ -1,0 +1,62 @@
+package web
+
+import "fmt"
+
+script CopyMe(s string) {
+  var TempText = document.createElement("input");
+  TempText.value = s;
+  document.body.appendChild(TempText);
+  TempText.select();
+  
+  document.execCommand("copy");
+  document.body.removeChild(TempText);
+}
+
+templ AccordionItem(item AccordionItemData) {
+	<div
+		class="flex flex-col items-center justify-between w-full p-4"
+	>
+		<button
+			class="flex w-full justify-between"
+			hx-get={ fmt.Sprintf("/toggle-accordion?title=%s&description=%s&isOpen=%s&command=%s", item.title, item.description, item.getIsOpen(), item.command) }
+			hx-trigger="click"
+			hx-target="closest div"
+			hx-swap="outerHTML"
+		>
+			<div class="flex flex-col items-start justify-start text-left">
+				<h1 class="text-wrap text-[28px] font-extrabold">{ item.title }</h1>
+			</div>
+			<div class={ "h-full flex items-center justify-center", templ.KV("-rotate-90", item.isOpen) }>
+				<div>
+					@ChevronLeft()
+				</div>
+			</div>
+		</button>
+		<div class={ templ.KV(" hidden ", !item.isOpen) }>
+			<div class={ "text-wrap text-left w-full text-[#71717A] text-[14px] overflow-hidden" }>
+				{ item.description }
+			</div>
+			<div class={ "border group flex justify-between border-slate-300 mt-4 rounded-lg flex items-start px-4 w-full py-2 overflow-hidden" }>
+				{ item.command }
+				<button onclick={ Toast("Successfully copied command 🚀") } onclick={ CopyMe(item.command) } class="hidden group-hover:flex">
+					@IconCopy()
+				</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ Walkthrough() {
+	@Onboarding("start by adding your first project.") {
+		<div class="bg-white gap-4 p-6 rounded-md shadow-glow w-full flex flex-col">
+			<div class="w-full">
+				@AccordionItem(installCLIItem())
+				@AccordionItem(createProjectItem())
+				@AccordionItem(addEnvItem())
+			</div>
+			<div class="w-full flex items-center justify-center">
+				<button class="bg-dark w-fit py-[14px] px-[78px] text-white rounded-md" type="submit">Skip</button>
+			</div>
+		</div>
+	}
+}
