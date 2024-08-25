@@ -6,6 +6,16 @@ templ Base() {
 		<head>
 			<meta charset="utf-8"/>
 			<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
+			<style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+          /* Hide scrollbar for IE, Edge and Firefox */
+            .no-scrollbar {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+          }
+      </style>
 			<title>Secretly</title>
 			<link href="assets/css/output.css" rel="stylesheet"/>
 			<script src="assets/js/htmx.min.js"></script>
