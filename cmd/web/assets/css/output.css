@@ -624,6 +624,10 @@ video {
   height: 100vh;
 }
 
+.max-h-\[200px\] {
+  max-height: 200px;
+}
+
 .min-h-full {
   min-height: 100%;
 }
@@ -716,6 +720,10 @@ video {
   overflow: hidden;
 }
 
+.overflow-scroll {
+  overflow: scroll;
+}
+
 .text-wrap {
   text-wrap: wrap;
 }
@@ -730,11 +738,6 @@ video {
 
 .border {
   border-width: 1px;
-}
-
-.border-slate-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(203 213 225 / var(--tw-border-opacity));
 }
 
 .border-textInput {
