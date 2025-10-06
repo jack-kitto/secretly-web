@@ -29,3 +29,5 @@ tmp/
 main
 *templ.go
 .DS_Store
+sqlboiler.toml
+dbconfig.yml

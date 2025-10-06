@@ -1,0 +1,10 @@
+wipe = true
+add-enum-types = true
+[psql]
+sslmode = "disable"
+dbname = "secretly"
+host = ""
+port = 5432
+user = ""
+pass = ""
+blacklist = ["migrations", "other"]
